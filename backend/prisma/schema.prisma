@@ -1,0 +1,141 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Theme {
+  light
+  dark
+}
+
+enum PostStatus {
+  draft
+  published
+}
+
+model User {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  username     String     @unique
+  email        String     @unique
+  passwordHash String
+  displayName  String
+  bio          String?
+  avatarUrl    String?
+  theme        Theme      @default(dark)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  posts        Post[]
+  comments     Comment[]
+  likes        Like[]
+  bookmarks    Bookmark[]
+  
+  followers    Follow[]   @relation("Following")
+  following    Follow[]   @relation("Follower")
+}
+
+model Post {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  authorId      String     @db.ObjectId
+  title         String
+  slug          String     @unique
+  content       String
+  cover         String?
+  status        PostStatus @default(draft)
+  likeCount     Int        @default(0)
+  publishedAt   DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  author        User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  tags          PostTag[]
+  comments      Comment[]
+  likes         Like[]
+  bookmarks     Bookmark[]
+
+  @@index([authorId])
+  @@index([status, publishedAt])
+}
+
+model Tag {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String    @unique
+  postCount Int       @default(0)
+  posts     PostTag[]
+}
+
+model PostTag {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  postId String @db.ObjectId
+  tagId  String @db.ObjectId
+
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, tagId])
+}
+
+model Comment {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  postId    String    @db.ObjectId
+  authorId  String    @db.ObjectId
+  parentId  String?   @db.ObjectId
+  body      String
+  createdAt DateTime  @default(now())
+
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent    Comment?  @relation("Thread", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   Comment[] @relation("Thread")
+
+  @@index([postId])
+  @@index([parentId])
+}
+
+model Like {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  postId String @db.ObjectId
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model Bookmark {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  postId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model Follow {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  followerId  String   @db.ObjectId
+  followingId String   @db.ObjectId
+  createdAt   DateTime @default(now())
+
+  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+}
+
+model Cache {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  key       String   @unique
+  value     String
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}

@@ -1,0 +1,69 @@
+:root {
+  /* Color Tokens - Default (Light Mode) */
+  --color-primary: #1f4d3a;
+  --color-primary-hover: #4f8a6b;
+  --color-primary-glow: rgba(79, 138, 107, 0.28);
+  --color-accent: #ddc5a3;
+  
+  --bg-color: #f4ebda;
+  --surface-color: #f8f2e7;
+  --surface-border: rgba(31, 77, 58, 0.12);
+  --shadow-color: rgba(31, 77, 58, 0.08);
+  
+  --text-primary: #1c211d;
+  --text-muted: #4d564f;
+  
+  /* Spacing Scale (8-pt grid) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Typography Scale */
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
+
+  --fs-hero: clamp(2.5rem, 5vw, 4rem); /* 40px - 64px */
+  --fs-h1: 2.25rem; /* 36px */
+  --fs-h2: 1.5rem; /* 24px */
+  --fs-h3: 1.125rem; /* 18px */
+  --fs-body: 1.0625rem; /* 17px */
+  --fs-ui: 0.875rem; /* 14px */
+  --fs-meta: 0.75rem; /* 12px */
+
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+
+  --lh-body: 1.8;
+  --lh-ui: 1.5;
+
+  /* Layout Boundaries */
+  --max-width-article: 680px;
+  --max-width-page: 1200px;
+  
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode Overrides */
+[data-theme='dark'] {
+  --bg-color: #000000;
+  --surface-color: rgba(255, 255, 255, 0.05);
+  --surface-border: rgba(255, 255, 255, 0.1);
+  --shadow-color: rgba(0, 0, 0, 0.6);
+  
+  --text-primary: #F7FAFC;
+  --text-muted: #9CA3AF;
+  
+  --color-primary: #4f8a6b;
+  --color-primary-hover: #1f4d3a;
+  --color-primary-glow: rgba(79, 138, 107, 0.35);
+  --color-accent: #b7d6c3;
+}

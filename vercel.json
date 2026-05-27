@@ -1,0 +1,80 @@
+{
+  "version": 2,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "0"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' res.cloudinary.com data:; connect-src 'self' api.inkwell.app http://localhost:3000"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "/components/(.*)",
+      "dest": "/frontend/components/$1"
+    },
+    {
+      "src": "/styles/(.*)",
+      "dest": "/frontend/styles/$1"
+    },
+    {
+      "src": "/scripts/(.*)",
+      "dest": "/frontend/scripts/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/frontend/assets/$1"
+    },
+    {
+      "src": "/auth",
+      "dest": "/frontend/pages/auth.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "/frontend/pages/dashboard.html"
+    },
+    {
+      "src": "/new-post",
+      "dest": "/frontend/pages/dashboard.html"
+    },
+    {
+      "src": "/post/(.*)",
+      "dest": "/frontend/pages/post.html"
+    },
+    {
+      "src": "/profile/(.*)",
+      "dest": "/frontend/pages/profile.html"
+    },
+    {
+      "src": "/settings",
+      "dest": "/frontend/pages/settings.html"
+    },
+    {
+      "src": "/",
+      "dest": "/frontend/pages/index.html"
+    }
+  ]
+}

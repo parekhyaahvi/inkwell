@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InkWell — Join the Reading & Writing Community</title>
+  <meta name="description" content="Access your personalized distraction-free canvas and read premium articles on InkWell.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/styles/variables.css">
+  <link rel="stylesheet" href="/styles/global.css">
+  <link rel="stylesheet" href="/styles/animations.css">
+  <link rel="stylesheet" href="/styles/components.css">
+  <link rel="stylesheet" href="/styles/themes.css">
+  
+  <style>
+    body {
+      background: #000;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .auth-split-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      padding: 1rem;
+      box-sizing: border-box;
+      gap: 1rem;
+    }
+    
+    /* Left Panel: Grainient & Branding */
+    .auth-visual-panel {
+      flex: 1.2;
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      background: #000;
+    }
+
+    #grainient-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .visual-content {
+      position: relative;
+      z-index: 1;
+      max-width: 480px;
+      padding: 2rem;
+    }
+
+    .visual-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 2rem;
+      letter-spacing: -0.03em;
+    }
+
+    .visual-logo svg {
+      width: 32px;
+      height: 32px;
+      color: #b7d6c3;
+    }
+
+    .visual-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    /* Right Panel: Auth Form */
+    .auth-form-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .auth-form-wrapper {
+      width: 100%;
+      max-width: 420px;
+      color: white;
+    }
+
+    .auth-form-header {
+      margin-bottom: 2.5rem;
+    }
+
+    .auth-form-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-form-subtitle {
+      color: #9CA3AF;
+      font-size: 1rem;
+    }
+
+    /* Social buttons */
+    .social-auth-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .btn-social {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0.75rem;
+      border-radius: 12px;
+      background: transparent;
+      border: 1px solid #374151;
+      color: white;
+      font-weight: 500;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #374151;
+      font-size: 0.8rem;
+      margin-bottom: 2rem;
+    }
+
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #374151;
+    }
+
+    .divider:not(:empty)::before { margin-right: 1.5rem; }
+    .divider:not(:empty)::after { margin-left: 1.5rem; }
+
+    /* Custom Form Layout */
+    .form-row-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-group { margin-bottom: 1.5rem; }
+    .form-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: white;
+    }
+
+    .input-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(183, 214, 195, 0.22);
+      color: white;
+      height: 52px;
+      padding: 0 20px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(4px);
+    }
+
+    .input-pill:focus {
+      outline: none;
+      border-color: #4f8a6b;
+      background: rgba(79, 138, 107, 0.08);
+      box-shadow: 0 0 0 3px rgba(79, 138, 107, 0.18);
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: #6B7280;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s ease, transform 0.2s ease;
+      border-radius: 8px;
+    }
+
+    .password-toggle-btn:hover {
+      color: #b7d6c3;
+      background: rgba(183, 214, 195, 0.1);
+    }
+
+    .password-toggle-btn:active {
+      transform: translateY(-50%) scale(0.9);
+    }
+
+    .eye-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .btn-primary-auth {
+      background: #4f8a6b;
+      color: #08120d;
+      font-weight: 700;
+      border-radius: 12px;
+      padding: 1rem;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary-auth:hover {
+      background: #1f4d3a;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 138, 107, 0.28);
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #9CA3AF;
+    }
+
+    .auth-footer span {
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Mobile handling */
+    @media (max-width: 900px) {
+      .auth-visual-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-split-container">
+    <!-- Left Visual Panel -->
+    <div class="auth-visual-panel">
+      <div id="grainient-container"></div>
+      <div class="visual-content">
+        <div class="visual-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5l6.74-6.76z"></path>
+            <line x1="16" y1="8" x2="2" y2="22"></line>
+            <line x1="17.5" y1="15" x2="9" y2="15"></line>
+          </svg>
+          InkWell
+        </div>
+        <h1 class="visual-title">Get Started with Us</h1>
+      </div>
+    </div>
+
+    <!-- Right Form Panel -->
+    <div class="auth-form-panel">
+      <div class="auth-form-wrapper">
+        <div class="auth-form-header">
+          <h2 class="auth-form-title" id="authFormTitle">Sign Up Account</h2>
+          <p class="auth-form-subtitle" id="authSubtitle">Enter your personal data to create your account.</p>
+        </div>
+
+        <div class="social-auth-grid" id="socialGrid">
+          <button class="btn-social">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#EA4335" d="M12.48 10.92v3.28h7.84c-.24 1.84-.92 3.32-2.12 4.4-1.2 1.08-2.68 1.84-5.72 1.84-4.8 0-8.68-3.8-8.68-8.44s3.88-8.44 8.68-8.44c2.52 0 4.36.96 5.8 2.28L20.6 3.24C18.44 1.28 15.72 0 12.48 0 6.64 0 1.84 4.84 1.84 10.92s4.8 10.92 10.64 10.92c3.16 0 5.68-1.04 7.6-3.08 2-2.04 2.64-4.84 2.64-7.28 0-.48-.04-.96-.12-1.44H12.48z"/></svg>
+            Google
+          </button>
+          <button class="btn-social">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="white" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            Github
+          </button>
+        </div>
+
+        <div class="divider">Or</div>
+
+        <form id="authForm" novalidate>
+          <div class="form-row-split" id="registerFields">
+            <div class="form-group">
+              <label class="form-label" for="displayName">First Name</label>
+              <input type="text" id="displayName" class="input-pill" placeholder="eg. John" required>
+              <div class="form-error" id="displayNameError" style="color: #EF4444; font-size: 0.8rem; margin-top: 4px; display: none;">Name is required</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="username">Username</label>
+              <input type="text" id="username" class="input-pill" placeholder="eg. john_doe" required>
+              <div class="form-error" id="usernameError" style="color: #EF4444; font-size: 0.8rem; margin-top: 4px; display: none;">Invalid username</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input type="email" id="email" class="input-pill" placeholder="eg. johnfrans@gmail.com" required>
+            <div class="form-error" id="emailError" style="color: #EF4444; font-size: 0.8rem; margin-top: 4px; display: none;">Please enter a valid email address</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <div style="position: relative;">
+              <input type="password" id="password" class="input-pill" style="width: 100%; box-sizing: border-box;" placeholder="Enter your password" required>
+              <button type="button" id="passwordToggle" class="password-toggle-btn" aria-label="Toggle password visibility">
+                <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+            <div class="form-error" id="passwordError" style="color: #EF4444; font-size: 0.8rem; margin-top: 4px; display: none;">Must contain at least 8 characters</div>
+          </div>
+
+          <button type="submit" class="btn-primary-auth" id="submitBtn">Sign Up</button>
+        </form>
+
+        <div class="auth-footer" id="toggleLinkContainer">
+          Already have an account? <span id="authToggleBtn">Log in</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Grainient Script Setup -->
+  <script type="module">
+    import { Grainient } from '/scripts/grainient.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('grainient-container');
+      if (container) {
+        new Grainient(container, {
+          color1: '#1f4d3a',
+          color2: '#4f8a6b',
+          color3: '#b7d6c3',
+          timeSpeed: 3.0,
+          zoom: 0.9,
+          grainAmount: 0.1,
+          warpStrength: 1.0,
+          contrast: 1.2,
+          saturation: 1.1
+        });
+      }
+    });
+  </script>
+
+  <!-- Load Frontend Logic -->
+  <script type="module" src="/scripts/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+/* Theme Transition Helper classes */
+
+/* Class to prevent transitions flashing during initial load */
+.theme-initializing * {
+  transition: none !important;
+}
+
+/* Light / Dark dynamic backdrop gradients */
+.theme-gradient-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+[data-theme='dark'] .theme-gradient-bg {
+  background: radial-gradient(circle at top right, rgba(79, 138, 107, 0.08), transparent 40%),
+              radial-gradient(circle at bottom left, rgba(183, 214, 195, 0.08), transparent 45%);
+}
+
+[data-theme='light'] .theme-gradient-bg {
+  background: radial-gradient(circle at top right, rgba(240, 231, 213, 0.22), transparent 40%),
+              radial-gradient(circle at bottom left, rgba(221, 197, 163, 0.18), transparent 45%);
+}
