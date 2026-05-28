@@ -47,21 +47,40 @@ const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000')
   .map(origin => origin.trim())
   .filter(Boolean);
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-      return;
-    }
+const corsOptionsDelegate = (req, callback) => {
+  const requestOrigin = req.header('Origin');
+  const requestHost = req.header('Host');
 
-    callback(new Error(`CORS blocked for origin: ${origin}`));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  maxAge: 86400 // Preflight options caching
+  if (!requestOrigin) {
+    callback(null, {
+      origin: true,
+      credentials: true,
+      methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      maxAge: 86400
+    });
+    return;
+  }
+
+  let isAllowed = allowedOrigins.includes(requestOrigin);
+
+  if (!isAllowed && requestHost) {
+    try {
+      isAllowed = new URL(requestOrigin).host === requestHost;
+    } catch {
+      isAllowed = false;
+    }
+  }
+
+  callback(null, {
+    origin: isAllowed,
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 86400
+  });
 };
-app.use(cors(corsOptions));
+app.use(cors(corsOptionsDelegate));
 
 // 3. Body Parsing Limit
 app.use(express.json({ limit: '2mb' }));
