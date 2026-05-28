@@ -9,6 +9,7 @@
     "dev": "nodemon backend/server.js",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push --schema=backend/prisma/schema.prisma"
+    ,"postinstall": "npx prisma generate --schema=backend/prisma/schema.prisma"
   },
   "dependencies": {
     "@prisma/client": "5.14.0",
