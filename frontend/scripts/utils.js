@@ -104,8 +104,16 @@ export const resolveApiUrl = (path) => {
 
 /**
  * Fetch wrapper that respects the configured backend base URL.
+ * Defaults to credentialed requests so cookie-based auth works in production.
  */
-export const apiFetch = (input, init) => fetch(resolveApiUrl(input), init);
+export const apiFetch = (input, init = {}) => {
+  const mergedInit = {
+    credentials: 'include',
+    ...init
+  };
+
+  return fetch(resolveApiUrl(input), mergedInit);
+};
 
 /**
  * Consistent hashing of Tag names to vibrant, readable HSL Colors

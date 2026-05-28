@@ -6,6 +6,7 @@ import { registerSchema, loginSchema, resetPasswordSchema } from '../validators/
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_for_dev_mode_only_not_production_hardening_64_bytes';
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // 7 days rolling expiry
+const SESSION_SAME_SITE = process.env.NODE_ENV === 'production' ? 'none' : 'strict';
 
 /**
  * Helper to generate JWT token and set in secure cookie
@@ -20,7 +21,7 @@ const sendSessionCookie = (res, user) => {
   res.cookie('token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: SESSION_SAME_SITE,
     maxAge: COOKIE_MAX_AGE
   });
 };
@@ -31,10 +32,12 @@ const sendSessionCookie = (res, user) => {
 export const register = async (req, res, next) => {
   try {
     const validatedData = registerSchema.parse(req.body);
+    const normalizedEmail = validatedData.email.trim().toLowerCase();
+    const normalizedUsername = validatedData.username.trim();
     
     // Check email uniqueness
-    const emailExists = await prisma.user.findUnique({
-      where: { email: validatedData.email }
+    const emailExists = await prisma.user.findFirst({
+      where: { email: normalizedEmail }
     });
     if (emailExists) {
       return res.status(400).json({
@@ -45,8 +48,8 @@ export const register = async (req, res, next) => {
     }
 
     // Check username uniqueness
-    const usernameExists = await prisma.user.findUnique({
-      where: { username: validatedData.username }
+    const usernameExists = await prisma.user.findFirst({
+      where: { username: normalizedUsername }
     });
     if (usernameExists) {
       return res.status(400).json({
@@ -62,8 +65,8 @@ export const register = async (req, res, next) => {
     // Save to database
     const newUser = await prisma.user.create({
       data: {
-        username: validatedData.username,
-        email: validatedData.email,
+        username: normalizedUsername,
+        email: normalizedEmail,
         passwordHash,
         displayName: validatedData.displayName,
         theme: 'dark' // default
@@ -103,7 +106,8 @@ export const login = async (req, res, next) => {
   console.log('[Auth]: Login attempt for:', req.body.email);
   try {
     const validatedData = loginSchema.parse(req.body);
-    const { email, password } = validatedData;
+    const email = validatedData.email.trim().toLowerCase();
+    const password = validatedData.password;
     
     // Setup lockout tracking variables
     const lockoutKey = `lockout:${email}`;
@@ -122,12 +126,30 @@ export const login = async (req, res, next) => {
     }
 
     console.log('[Auth]: Querying user...');
-    // Query user with a timeout safety
-    let user;
-    try {
-      user = await prisma.user.findUnique({ where: { email } });
-    } catch (dbErr) {
-      console.error('[Auth DB Error]:', dbErr.message);
+    let user = null;
+    let lastDbError = null;
+
+    for (let attempt = 1; attempt <= 2; attempt += 1) {
+      try {
+        user = await prisma.user.findFirst({ where: { email } });
+        lastDbError = null;
+        break;
+      } catch (dbErr) {
+        lastDbError = dbErr;
+        console.error(`[Auth DB Error][Attempt ${attempt}]:`, dbErr.message, dbErr.code || 'no-code');
+
+        if (attempt === 1) {
+          try {
+            await prisma.$disconnect();
+            await prisma.$connect();
+          } catch (reconnectErr) {
+            console.error('[Auth DB Reconnect Error]:', reconnectErr.message);
+          }
+        }
+      }
+    }
+
+    if (lastDbError) {
       return res.status(503).json({
         success: false,
         error: 'DatabaseUnavailable',
@@ -222,9 +244,9 @@ export const logout = async (req, res) => {
 export const resetPassword = async (req, res, next) => {
   try {
     const validatedData = resetPasswordSchema.parse(req.body);
-    const { email } = validatedData;
+    const email = validatedData.email.trim().toLowerCase();
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({ where: { email } });
     if (!user) {
       // Security practice: Don't disclose that the email doesn't exist
       return res.status(200).json({
