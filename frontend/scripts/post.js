@@ -1,4 +1,4 @@
-import { showToast, toggleTheme } from './utils.js';
+import { apiFetch, showToast, toggleTheme } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const sessionStr = localStorage.getItem('userSession');
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 2. Fetch Post Details
   const fetchPostDetails = async () => {
     try {
-      const response = await fetch(`/api/posts/${slug}`);
+      const response = await apiFetch(`/api/posts/${slug}`);
       const result = await response.json();
 
       if (!result.success) {
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('deletePostBtn')?.addEventListener('click', async () => {
           if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
             try {
-              const response = await fetch(`/api/posts/${post.id}`, {
+              const response = await apiFetch(`/api/posts/${post.id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${user.token}` }
               });
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const checkUserLikeAndBookmarkStates = async (postId) => {
     try {
       // 1. Bookmarks state
-      const resB = await fetch('/api/bookmarks');
+      const resB = await apiFetch('/api/bookmarks');
       const repB = await resB.json();
       if (repB.success) {
         const isBookmarked = repB.data.some(b => b.id === postId);
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-      const res = await fetch(`/api/posts/${postId}/like`, { method: 'POST' });
+      const res = await apiFetch(`/api/posts/${postId}/like`, { method: 'POST' });
       const rep = await res.json();
       
       if (!rep.success) throw new Error();
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-      const res = await fetch(`/api/bookmarks/${postId}`, { method: 'POST' });
+      const res = await apiFetch(`/api/bookmarks/${postId}`, { method: 'POST' });
       const rep = await res.json();
 
       if (!rep.success) throw new Error();
@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 5. Discussion Thread fetch
   const fetchComments = async () => {
     try {
-      const response = await fetch(`/api/comments/${postId}`);
+      const response = await apiFetch(`/api/comments/${postId}`);
       const result = await response.json();
 
       if (result.success) {
@@ -388,7 +388,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!bodyText) return;
 
             try {
-              const res = await fetch('/api/comments', {
+              const res = await apiFetch('/api/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -420,7 +420,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!confirmed) return;
 
         try {
-          const res = await fetch(`/api/comments/${node.id}`, { method: 'DELETE' });
+          const res = await apiFetch(`/api/comments/${node.id}`, { method: 'DELETE' });
           const rep = await res.json();
           if (rep.success) {
             showToast('Deleted', 'Comment successfully removed.', 'info');
@@ -450,7 +450,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
       submitCommentBtn.disabled = true;
-      const res = await fetch('/api/comments', {
+      const res = await apiFetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

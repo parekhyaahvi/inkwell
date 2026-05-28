@@ -1,4 +1,4 @@
-import { showToast, getTagColorStyles } from './utils.js';
+import { apiFetch, showToast, getTagColorStyles } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Navigation matching: Resolve if editor view should show
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const loadPostForEdit = async (postId) => {
     editorStatus.textContent = 'Loading...';
-    const response = await fetch(`/api/posts/${postId}`);
+    const response = await apiFetch(`/api/posts/${postId}`);
     const result = await response.json();
 
     if (!result.success) {
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = createdPostId ? `/api/posts/${createdPostId}` : '/api/posts';
       const method = createdPostId ? 'PATCH' : 'POST';
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         body: formData
       });
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = createdPostId ? `/api/posts/${createdPostId}` : '/api/posts';
       const method = createdPostId ? 'PATCH' : 'POST';
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         body: formData
       });

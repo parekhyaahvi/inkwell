@@ -74,6 +74,40 @@ export const toggleTheme = () => {
 };
 
 /**
+ * Resolve the backend base URL for API requests.
+ * Falls back to the current origin for local development.
+ */
+export const getApiBaseUrl = () => {
+  const configuredBaseUrl = window.__INKWELL_API_BASE_URL__
+    || document.documentElement.dataset.apiBaseUrl
+    || localStorage.getItem('inkwellApiBaseUrl')
+    || '';
+
+  return configuredBaseUrl.replace(/\/$/, '');
+};
+
+/**
+ * Convert a relative API path into an absolute URL when a backend base URL is configured.
+ */
+export const resolveApiUrl = (path) => {
+  if (!path || /^https?:\/\//i.test(path)) {
+    return path;
+  }
+
+  const baseUrl = getApiBaseUrl();
+  if (!baseUrl) {
+    return path;
+  }
+
+  return path.startsWith('/') ? `${baseUrl}${path}` : `${baseUrl}/${path}`;
+};
+
+/**
+ * Fetch wrapper that respects the configured backend base URL.
+ */
+export const apiFetch = (input, init) => fetch(resolveApiUrl(input), init);
+
+/**
  * Consistent hashing of Tag names to vibrant, readable HSL Colors
  * Enforces 4.5:1 contrast against surface containers
  */

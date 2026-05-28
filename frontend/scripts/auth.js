@@ -1,5 +1,5 @@
 // Authentication Handlers
-import { showToast } from './utils.js';
+import { apiFetch, showToast } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const authForm = document.getElementById('authForm');
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = true;
       submitBtn.textContent = isLoginState ? 'Logging In...' : 'Signing Up...';
 
-      const response = await fetch(endpoint, {
+      const response = await apiFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

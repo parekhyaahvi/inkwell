@@ -4,6 +4,9 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 import authRoutes from './routes/auth.js';
 import postRoutes from './routes/posts.js';
@@ -39,8 +42,20 @@ app.use(helmet({
 }));
 
 // 2. CORS Whitelisting
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],

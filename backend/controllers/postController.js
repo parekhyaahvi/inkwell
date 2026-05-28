@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import createDOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { prisma } from '../services/db.js';
+import { uploadImage } from '../services/cloudinary.js';
 import { postCreateSchema, postUpdateSchema } from '../validators/zodSchemas.js';
 
 const window = new JSDOM('').window;
@@ -203,9 +204,9 @@ export const createPost = async (req, res, next) => {
     const { title, content, status, tags = [] } = validatedData;
     let { cover } = validatedData;
 
-    // Handle local file upload if present
+    // Handle uploaded cover image if present
     if (req.file) {
-      cover = `/uploads/${req.file.filename}`;
+      cover = await uploadImage(req.file.buffer, req.file.originalname);
     }
 
     const cleanContent = DOMPurify.sanitize(content);
@@ -297,9 +298,9 @@ export const updatePost = async (req, res, next) => {
     const { title, content, status, tags } = validatedData;
     let { cover } = validatedData;
 
-    // Handle local file upload if present
+    // Handle uploaded cover image if present
     if (req.file) {
-      cover = `/uploads/${req.file.filename}`;
+      cover = await uploadImage(req.file.buffer, req.file.originalname);
     }
 
     const cleanContent = content !== undefined ? DOMPurify.sanitize(content) : undefined;

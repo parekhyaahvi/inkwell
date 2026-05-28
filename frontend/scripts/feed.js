@@ -1,4 +1,4 @@
-import { showToast, getTagColorStyles, toggleTheme } from './utils.js';
+import { apiFetch, showToast, getTagColorStyles, toggleTheme } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Session check
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const fetchTrendingTags = async () => {
     if (!trendingTagsList) return;
     try {
-      const response = await fetch('/api/tags/trending');
+      const response = await apiFetch('/api/tags/trending');
       const result = await response.json();
       
       if (result.success) {
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headers['Authorization'] = `Bearer ${user.token}`;
       }
 
-      const response = await fetch(url, { headers });
+      const response = await apiFetch(url, { headers });
       const result = await response.json();
 
       removeSkeletons();

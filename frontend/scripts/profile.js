@@ -1,4 +1,4 @@
-import { showToast, getTagColorStyles, toggleTheme } from './utils.js';
+import { apiFetch, showToast, getTagColorStyles, toggleTheme } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const sessionStr = localStorage.getItem('userSession');
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Retrieve user details
   const fetchProfileDetails = async () => {
     try {
-      const response = await fetch(`/api/users/${targetUsername}`);
+      const response = await apiFetch(`/api/users/${targetUsername}`);
       const result = await response.json();
 
       if (!result.success) {
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       // Fetch followed list of current user to see if already following
-      const res = await fetch(`/api/users/${user.username}`);
+      const res = await apiFetch(`/api/users/${user.username}`);
       const rep = await res.json();
       
       // Let's check: we can fetch check follow status in many ways.
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.addEventListener('click', async () => {
         try {
           btn.disabled = true;
-          const resF = await fetch(`/api/users/${profileId}/follow`, { method: 'POST' });
+          const resF = await apiFetch(`/api/users/${profileId}/follow`, { method: 'POST' });
           const repF = await resF.json();
 
           if (repF.success) {
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch Published works for author
   const fetchPublishedWorks = async (username) => {
     try {
-      const response = await fetch(`/api/posts?author=${username}`);
+      const response = await apiFetch(`/api/posts?author=${username}`);
       const result = await response.json();
 
       if (result.success) {

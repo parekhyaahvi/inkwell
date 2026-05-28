@@ -1,4 +1,4 @@
-import { showToast, toggleTheme } from './utils.js';
+import { apiFetch, showToast, toggleTheme } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const sessionStr = localStorage.getItem('userSession');
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load current values
   const loadUserSettings = async () => {
     try {
-      const response = await fetch(`/api/users/${user.username}`);
+      const response = await apiFetch(`/api/users/${user.username}`);
       const result = await response.json();
       
       if (result.success) {
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     try {
-      const response = await fetch('/api/users/me', {
+      const response = await apiFetch('/api/users/me', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const nextTheme = toggleTheme();
 
     // Sync theme configuration with server account
-    fetch('/api/users/me', {
+    apiFetch('/api/users/me', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ theme: nextTheme })
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!confirmed) return;
 
     try {
-      const response = await fetch('/api/auth/logout', { method: 'POST' });
+      const response = await apiFetch('/api/auth/logout', { method: 'POST' });
       const result = await response.json();
 
       if (result.success) {
