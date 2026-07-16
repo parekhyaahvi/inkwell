@@ -91,12 +91,6 @@ app.use(cookieParser(process.env.JWT_SECRET || 'fallback_secret_for_dev_mode_onl
 // 5. Global rate limiter (60 req/min)
 app.use(generalRateLimiter);
 
-// 6. Serve Frontend Static Resources
-app.use('/components', express.static(path.join(rootDir, 'frontend/components')));
-app.use('/styles', express.static(path.join(rootDir, 'frontend/styles')));
-app.use('/scripts', express.static(path.join(rootDir, 'frontend/scripts')));
-app.use('/assets', express.static(path.join(rootDir, 'frontend/assets')));
-app.use('/uploads', express.static(path.join(rootDir, 'uploads')));
 
 // API Routes mounting
 app.use('/api/auth', authRoutes);
@@ -106,31 +100,16 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/bookmarks', bookmarkRoutes);
 
-// Frontend View Routes (Resolving paths directly to physical page HTML templates)
-const serveHTML = (pageName) => (req, res) => {
-  res.sendFile(path.join(rootDir, 'frontend/pages', pageName));
-};
 
-app.get('/', serveHTML('index.html'));
-app.get('/auth', serveHTML('auth.html'));
-app.get('/dashboard', serveHTML('dashboard.html'));
-app.get('/new-post', serveHTML('dashboard.html')); // Writer's Canvas will mount inside dashboard router frame
-app.get('/post/:slug', serveHTML('post.html'));
-app.get('/profile/:username', serveHTML('profile.html'));
-app.get('/settings', serveHTML('settings.html'));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({ success: true, status: 'Healthy', timestamp: new Date() });
 });
 
-// Fallback to home/index if page not found
+// Fallback for API routes not found
 app.use((req, res, next) => {
-  if (req.accepts('html')) {
-    res.status(404).sendFile(path.join(rootDir, 'frontend/pages/index.html'));
-    return;
-  }
-  res.status(404).json({ success: false, error: 'NotFound', message: 'Resource not found' });
+  res.status(404).json({ success: false, error: 'NotFound', message: 'API resource not found' });
 });
 
 // 7. Global Async Error Boundary (Final middleware)
