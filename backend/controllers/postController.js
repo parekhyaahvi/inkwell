@@ -418,6 +418,12 @@ export const deletePost = async (req, res, next) => {
         });
       }
 
+      // Manually delete related records to prevent Prisma relation constraint errors in MongoDB
+      await tx.postTag.deleteMany({ where: { postId: id } });
+      await tx.comment.deleteMany({ where: { postId: id } });
+      await tx.like.deleteMany({ where: { postId: id } });
+      await tx.bookmark.deleteMany({ where: { postId: id } });
+
       await tx.post.delete({ where: { id } });
     });
 
