@@ -54,16 +54,10 @@ export const getPosts = async (req, res, next) => {
       });
       
       const followedIds = followedUsers.map(f => f.followingId);
+      // Include the user's own posts in their home feed
+      followedIds.push(req.user.id);
 
-      if (followedIds.length > 0) {
-        whereClause.authorId = { in: followedIds };
-      } else {
-        return res.status(200).json({
-          success: true,
-          data: [],
-          meta: { nextCursor: null }
-        });
-      }
+      whereClause.authorId = { in: followedIds };
     }
 
     // Cursor-based pagination settings
