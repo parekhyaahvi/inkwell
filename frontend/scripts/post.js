@@ -1,4 +1,4 @@
-import { apiFetch, showToast, toggleTheme } from './utils.js';
+import { apiFetch, showToast, getTagColorStyles, toggleTheme, BLANK_AVATAR } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const sessionStr = localStorage.getItem('userSession');
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     navUserArea.innerHTML = `
       <div style="display: flex; align-items: center; gap: 12px;">
         <span style="font-weight: 500; font-size: var(--fs-ui); cursor: pointer;" id="navToDashBtn">Dashboard</span>
-        <img src="${user.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80'}" style="width: 36px; height: 36px; border-radius: 50%; cursor: pointer;" id="navAvatarBtn">
+        <img src="${user.avatarUrl || BLANK_AVATAR}" style="width: 36px; height: 36px; border-radius: 50%; cursor: pointer;" id="navAvatarBtn">
       </div>
     `;
     
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       postTitle.textContent = post.title;
       authorName.textContent = post.author.displayName;
       postDate.textContent = new Date(post.publishedAt || post.createdAt).toLocaleDateString();
-      authorAvatar.src = post.author.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80';
+      authorAvatar.src = post.author.avatarUrl || BLANK_AVATAR;
       
       authorLink.addEventListener('click', () => {
         window.location.href = `/profile/${post.author.username}`;
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       <div class="comment-card">
         <div class="comment-header">
           <div class="comment-user">
-            <img src="${node.author.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80'}" class="comment-avatar">
+            <img src="${node.author.avatarUrl || BLANK_AVATAR}" class="comment-avatar">
             <span class="comment-username">${node.author.displayName}</span>
           </div>
           <span class="comment-time">${new Date(node.createdAt).toLocaleString()}</span>

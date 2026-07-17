@@ -1,4 +1,4 @@
-import { apiFetch, showToast, getTagColorStyles, toggleTheme } from './utils.js';
+import { apiFetch, showToast, getTagColorStyles, toggleTheme, BLANK_AVATAR } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const sessionStr = localStorage.getItem('userSession');
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (user) {
     navUserArea.innerHTML = `
       <div style="display: flex; align-items: center; gap: 12px;">
-        <img src="${user.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80'}" style="width: 36px; height: 36px; border-radius: 50%; cursor: pointer;" id="navAvatarBtn">
+        <img src="${user.avatarUrl || BLANK_AVATAR}" style="width: 36px; height: 36px; border-radius: 50%; cursor: pointer;" id="navAvatarBtn">
       </div>
     `;
     document.getElementById('navAvatarBtn').addEventListener('click', () => {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
       profileName.textContent = profile.displayName;
       profileHandle.textContent = `@${profile.username}`;
       profileBio.textContent = profile.bio || "No biography provided yet.";
-      profileAvatar.src = profile.avatarUrl || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80';
+      profileAvatar.src = profile.avatarUrl || BLANK_AVATAR;
       
       statsPosts.textContent = profile.postCount;
       statsFollowers.textContent = profile.followersCount;

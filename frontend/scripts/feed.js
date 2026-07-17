@@ -1,4 +1,4 @@
-import { apiFetch, showToast, getTagColorStyles, toggleTheme } from './utils.js';
+import { apiFetch, showToast, getTagColorStyles, toggleTheme, BLANK_AVATAR } from './utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Session check
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!navUserArea) return;
     if (user) {
       navUserArea.innerHTML = `
-        <img src="${user.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + user.username}" 
+        <img src="${user.avatarUrl || BLANK_AVATAR}"
              class="nav-avatar" 
              style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.2); cursor: pointer;"
              id="navProfileToggle">
