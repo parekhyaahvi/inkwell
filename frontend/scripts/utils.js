@@ -107,9 +107,24 @@ export const resolveApiUrl = (path) => {
  * Defaults to credentialed requests so cookie-based auth works in production.
  */
 export const apiFetch = (input, init = {}) => {
+  const headers = new Headers(init.headers || {});
+  
+  try {
+    const sessionStr = localStorage.getItem('userSession');
+    if (sessionStr) {
+      const user = JSON.parse(sessionStr);
+      if (user && user.token && !headers.has('Authorization')) {
+        headers.set('Authorization', `Bearer ${user.token}`);
+      }
+    }
+  } catch (e) {
+    // Ignore parse errors
+  }
+
   const mergedInit = {
     credentials: 'include',
-    ...init
+    ...init,
+    headers
   };
 
   return fetch(resolveApiUrl(input), mergedInit);

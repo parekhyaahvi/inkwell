@@ -24,6 +24,8 @@ const sendSessionCookie = (res, user) => {
     sameSite: SESSION_SAME_SITE,
     maxAge: COOKIE_MAX_AGE
   });
+
+  return token;
 };
 
 /**
@@ -74,7 +76,7 @@ export const register = async (req, res, next) => {
     });
 
     // Send JWT session
-    sendSessionCookie(res, newUser);
+    const token = sendSessionCookie(res, newUser);
 
     return res.status(201).json({
       success: true,
@@ -83,7 +85,8 @@ export const register = async (req, res, next) => {
           id: newUser.id,
           username: newUser.username,
           displayName: newUser.displayName,
-          theme: newUser.theme
+          theme: newUser.theme,
+          token
         }
       }
     });
@@ -197,7 +200,7 @@ export const login = async (req, res, next) => {
     await cache.del(failedAttemptsKey);
 
     // Send JWT Session
-    sendSessionCookie(res, user);
+    const token = sendSessionCookie(res, user);
 
     return res.status(200).json({
       success: true,
@@ -206,7 +209,8 @@ export const login = async (req, res, next) => {
           id: user.id,
           username: user.username,
           displayName: user.displayName,
-          theme: user.theme
+          theme: user.theme,
+          token
         }
       }
     });

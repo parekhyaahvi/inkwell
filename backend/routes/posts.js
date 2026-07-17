@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getPosts, getPostBySlug, createPost, updatePost, deletePost, toggleLike } from '../controllers/postController.js';
-import { authMiddleware } from '../middleware/auth.js';
+import { authMiddleware, optionalAuthMiddleware } from '../middleware/auth.js';
 import { generalRateLimiter } from '../middleware/rateLimiter.js';
 import { multerUpload } from '../middleware/upload.js';
 
@@ -8,7 +8,7 @@ const router = Router();
 
 router.use(generalRateLimiter);
 
-router.get('/', getPosts);
+router.get('/', optionalAuthMiddleware, getPosts);
 router.get('/:slug', getPostBySlug);
 router.post('/', authMiddleware, multerUpload, createPost);
 router.patch('/:id', authMiddleware, multerUpload, updatePost);
