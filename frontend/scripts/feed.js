@@ -275,7 +275,14 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
           }
 
+          let deleteBtnHTML = '';
+          if (user && user.id === post.author.id) {
+            deleteBtnHTML = `<button class="delete-post-btn btn btn-ghost" data-id="${post.id}" style="position: absolute; top: 12px; right: 12px; background: rgba(239, 68, 68, 0.9); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: none; z-index: 10;">Delete</button>`;
+            card.style.position = 'relative';
+          }
+
           card.innerHTML = `
+            ${deleteBtnHTML}
             ${coverHTML}
             <h3 class="post-card-title">${post.title}</h3>
             <p class="post-card-excerpt">${post.excerpt || 'Read this fascinating story by ' + post.author.displayName + '...'}</p>
@@ -299,6 +306,31 @@ document.addEventListener('DOMContentLoaded', () => {
           `;
 
           feedContainer.appendChild(card);
+          
+          const delBtn = card.querySelector('.delete-post-btn');
+          if (delBtn) {
+            delBtn.addEventListener('click', async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (confirm('Are you sure you want to delete this post?')) {
+                try {
+                  const res = await apiFetch('/api/posts/' + post.id, {
+                    method: 'DELETE'
+                  });
+                  const rep = await res.json();
+                  if (rep.success) {
+                    card.remove();
+                    showToast('Deleted', 'Post successfully deleted.', 'success');
+                  } else {
+                    showToast('Error', rep.message || 'Failed to delete post.', 'error');
+                  }
+                } catch(err) {
+                  showToast('Error', 'Network error.', 'error');
+                  console.error(err);
+                }
+              }
+            });
+          }
         });
 
         // Set next pagination elements

@@ -211,8 +211,14 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `<img src="${post.cover}" alt="${post.title}" class="masonry-cover">`
             : '';
 
+          let deleteBtnHTML = '';
+          if (user && user.id === targetUserId) {
+            deleteBtnHTML = `<button class="delete-post-btn btn btn-ghost" data-id="${post.id}" style="position: absolute; top: 12px; right: 12px; background: rgba(239, 68, 68, 0.9); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: none; z-index: 10;">Delete</button>`;
+          }
+
           item.innerHTML = `
-            <div class="glass-card masonry-card animate-fade-in" style="animation-delay: ${idx * 50}ms">
+            <div class="glass-card masonry-card animate-fade-in" style="animation-delay: ${idx * 50}ms; position: relative;">
+              ${deleteBtnHTML}
               ${coverImg}
               <h3 class="masonry-title">${post.title}</h3>
               <p style="font-size: var(--fs-meta); color: var(--text-muted)">${post.excerpt}</p>
@@ -228,6 +234,32 @@ document.addEventListener('DOMContentLoaded', () => {
           });
 
           masonryPortfolio.appendChild(item);
+
+          const delBtn = item.querySelector('.delete-post-btn');
+          if (delBtn) {
+            delBtn.addEventListener('click', async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (confirm('Are you sure you want to delete this post?')) {
+                try {
+                  const res = await apiFetch('/api/posts/' + post.id, {
+                    method: 'DELETE'
+                  });
+                  const rep = await res.json();
+                  if (rep.success) {
+                    item.remove();
+                    showToast('Deleted', 'Post successfully deleted.', 'success');
+                    statsPosts.textContent = Math.max(0, Number(statsPosts.textContent) - 1);
+                  } else {
+                    showToast('Error', rep.message || 'Failed to delete post.', 'error');
+                  }
+                } catch(err) {
+                  showToast('Error', 'Network error.', 'error');
+                  console.error(err);
+                }
+              }
+            });
+          }
         });
       }
     } catch (err) {

@@ -57,6 +57,12 @@ export const getPosts = async (req, res, next) => {
 
       if (followedIds.length > 0) {
         whereClause.authorId = { in: followedIds };
+      } else {
+        return res.status(200).json({
+          success: true,
+          data: [],
+          meta: { nextCursor: null }
+        });
       }
     }
 
